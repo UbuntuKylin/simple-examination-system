@@ -36,12 +36,11 @@ ExaminationPage::ExaminationPage(QWidget *parent) : QWidget(parent)
                    <<"5. 使用优客助手查看系统信息。"
                    <<"6. 调节系统亮度。"
                    <<"7. 添加自定义系统快捷键。"
-                   <<"8. 修改搜狗输入法的快捷键设置。"
-                   <<"9. 修改默认的软件仓库源。"
+                   <<"8. 修改搜狗拼音输入法的快捷键设置。"
+                   <<"9. 修改默认的软件仓库源为阿里云：http://mirrors.aliyun.com/ubuntu/"
                    <<"10. 设置一个应用为开机启动项。"
-                   <<"11. 使用问题反馈功能，发表意见或者提交bug。"
-                   <<"12. 完成一局最大难度(30x16)扫雷。"
-                   <<"13. 用自定义的图像（比如个人头像等）替换开始菜单的图标。";
+                   <<"11. 完成一局中等难度(16x16)扫雷。"
+                   <<"12. 用自定义的图像（比如个人头像等）替换开始菜单的图标。";
 
     for(int i=0;i<m_question_list.size();i++)
     {
@@ -144,10 +143,37 @@ void ExaminationPage::checkProcess()
         file.open(QIODevice::ReadOnly | QIODevice::Text);
         QByteArray t = file.readAll();
         QString list = QString(t);
-        qDebug()<<"history:"<<list;
+        //qDebug()<<"history:"<<list;
         file.close();
         if (t.contains("WPS 文字"))
             updateFineshed(3);
+    }
+
+    if (m_done_flag[7] == 0)
+    {
+        QFile file(userPath + "/.config/SogouPY/sogouEnv.ini");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        QByteArray t = file.readAll();
+        QString list = QString(t);
+        //qDebug()<<"m_sogou_setting:"<<list;
+        file.close();
+
+        if (m_sogou_setting == "")
+            m_sogou_setting = list;
+        else if (m_sogou_setting != list)
+            updateFineshed(8);
+    }
+
+    if (m_done_flag[8] == 0)
+    {
+        QFile file("/etc/apt/sources.list");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        QByteArray t = file.readAll();
+        QString list = QString(t);
+        //qDebug()<<"sources.list:"<<list;
+        file.close();
+        if (t.contains("http://mirrors.aliyun.com/ubuntu/"))
+            updateFineshed(9);
     }
 
     if (m_done_flag[9] == 0)
@@ -159,7 +185,7 @@ void ExaminationPage::checkProcess()
         dir->setNameFilters(filter);
         QList<QFileInfo> *fileInfo=new QList<QFileInfo>(dir->entryInfoList(filter));
 
-        qDebug()<<fileInfo->count()<<auto_start_count<<fileInfo->size()<<dir->exists();
+        //qDebug()<<fileInfo->count()<<auto_start_count<<fileInfo->size()<<dir->exists();
         if (auto_start_count == -1)
             auto_start_count = fileInfo->count();
         else if (fileInfo->count() > auto_start_count)
@@ -167,6 +193,8 @@ void ExaminationPage::checkProcess()
             updateFineshed(10);
         }
     }
+
+    //.local/share/gnome-mines/scores
 }
 
 void ExaminationPage::setUserName(QString name)

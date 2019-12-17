@@ -34,16 +34,18 @@ public:
     QLabel *m_score_info;
 
     QStringList m_question_list;
+    QString m_sogou_setting = "";
 
     QProcess *m_screenshot_monitor;
     QTimer *m_cycle_timer;
 
     int m_score = 0;
+    bool first_check = true;
     int app_install_count = -1;
     int auto_start_count = -1;
     int png_count = -1;
-    QList<int> m_question_score{10,10,10,10,10,10,10,10,10,10,10,20,20};
-    QList<int> m_done_flag{0,0,0,0,0, 0,0,0,0,0, 0,0,0};
+    QList<int> m_question_score{10,10,10,10,10,10,10,10,10,10,20,30};
+    QList<int> m_done_flag{0,0,0,0,0, 0,0,0,0,0,0,0};
 
     QList<QLabel*> m_lable_list;
 
